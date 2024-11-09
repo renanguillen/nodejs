@@ -1,0 +1,195 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "TechStore",
+    "version": "1.0.0",
+    "description": "API foi seedada com dados para demonstração."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor local"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Produto": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" },
+          "preco": { "type": "number" },
+          "categoriaId": { "type": "string" }
+        }
+      },
+      "Categoria": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" }
+        }
+      },
+      "Pedido": {
+        "type": "object",
+        "properties": {
+          "produtoId": { "type": "string" },
+          "quantidade": { "type": "integer" },
+          "data": { "type": "string", "format": "date" }
+        }
+      },
+      "Usuario": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "senha": { "type": "string" }
+        }
+      }
+    }
+  },
+  "security": [{ "BearerAuth": [] }],
+  "paths": {
+    "/produtos": {
+      "get": {
+        "summary": "Lista todos os produtos",
+        "responses": {
+          "200": {
+            "description": "Lista de produtos",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Produto" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categoria": {
+      "post": {
+        "summary": "Adiciona uma nova categoria",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Categoria" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Categoria criada com sucesso" }
+        }
+      }
+    },
+    "/pedidos": {
+      "get": {
+        "summary": "Lista todos os pedidos",
+        "responses": {
+          "200": {
+            "description": "Lista de pedidos",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Pedido" } }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria um novo pedido",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Pedido" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Pedido criado com sucesso" }
+        }
+      }
+    },
+    "/produto/{id}": {
+      "put": {
+        "summary": "Atualiza um produto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Produto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Produto atualizado com sucesso" },
+          "404": { "description": "Produto não encontrado" }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "summary": "Registro de usuário",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Usuario" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Usuário registrado com sucesso" }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login do usuário",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "senha": { "type": "string" }
+                }
+              }
+            }
+          },
+          "description": "Autenticação do usuário"
+        },
+        "responses": {
+          "200": {
+            "description": "Token JWT",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "token": { "type": "string" } }
+                }
+              }
+            }
+          },
+          "400": { "description": "Credenciais inválidas" }
+        }
+      }
+    }
+  }
+}
